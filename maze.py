@@ -3,6 +3,7 @@ This program makes a maze using command-line interface.
 """
 
 import random
+from interface import MazeCli
 
 # A small sample maze (used as input to the Maze class):
 maze_str = """  x   
@@ -13,7 +14,7 @@ x   x
 x   x$
 """
 
-class Maze():
+class Maze:
     """
     Create a maze instance from a string of x's and spaces which define the walls (x's)
     and hallways (spaces) of the maze. Print maze to the console and ask user for his
@@ -22,14 +23,19 @@ class Maze():
     """
     moves = {'n': (-1, 0), 's': (1, 0), 'e': (0, 1), 'w': (0, -1)}
 
-    def __init__(self, maze_str):
+    def __init__(self, maze_str, interface):
         """
         Create a matrix to store positions of walls and hallways of the maze.
         Initialize user's starting position at a random location.
         """
         self.maze = [list(string) for string in maze_str.splitlines()]
+        self.setInterface(interface)
         self.solved = False
-        self.setRandomPos()
+        self.current_pos = [0, 0]
+
+    def setInterface(self, interface):
+        if interface == 'cli':
+            self.interface = MazeCli()
 
     def setRandomPos(self):
         """
@@ -38,64 +44,12 @@ class Maze():
         available = [[r,c] for r, row in enumerate(self.maze) for c, value in enumerate(row) if value == ' ']
         self.current_pos = random.choice(available)
 
-    def begin(self):
+    def gameLoop(self):
         """
         Show map, ask user for his next move, and update position.
         Repeat until end is reached.
         """
-        while not self.solved:
-            self._show_status()
-            move = self._get_next_move()
-            self._update_pos(move)
-        self._show_status()
-        self.end()
-
-    def end(self):
-        """
-        Notify the user that they have finished. Ask if they want to play again.
-        """
-        print '\nCongratulations! You made it to the finish!'
-        replay = None
-        while replay not in ['y', 'n']:
-            replay = raw_input('Play again? (y, n): ')
-        if replay == 'y':
-            self.restart()
-        else:
-            quit()
-
-    def restart(self):
-        """
-        Move current position back to the start, and begin game loop again.
-        """
-        self.setRandomPos()
-        self.solved = False
-        self.begin()
-
-    def _get_next_move(self):
-        """
-        Get available (legal) moves, and ask user which one to make.
-        """
-        available_moves = self._get_available_moves()
-        prompt = '\nChoose a direction ({}) or quit: '.format(','.join(available_moves))
-        choice = None
-        while choice not in available_moves:
-            choice = raw_input(prompt)
-            if choice == 'quit': quit()
-        return choice
-
-    def _show_status(self):
-        """
-        Print the map.
-        """
-        print
-        for r, row in enumerate(self.maze):
-            print
-            for c, value in enumerate(row):
-                if self.current_pos == [r, c]:
-                    print '@',
-                else:
-                    print value,
-        print
+        self.interface.gameLoop(self)
 
     def _update_pos(self, move):
         """
@@ -107,6 +61,14 @@ class Maze():
         r, c = tuple(self.current_pos)
         if self.maze[r][c] == '$':
             self.solved = True
+
+    def restart(self):
+        """
+        Move current position back to the start, and begin game loop again.
+        """
+        self.setRandomPos()
+        self.solved = False
+        self.gameLoop()
 
     def _get_available_moves(self):
         """
@@ -126,6 +88,7 @@ class Maze():
 
 
 if __name__ == '__main__':
-    maze = Maze(maze_str)
-    maze.begin()
+    maze = Maze(maze_str, 'cli')
+    maze.setRandomPos()
+    maze.gameLoop()
 
