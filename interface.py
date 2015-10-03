@@ -2,10 +2,12 @@
 
 class MazeCli:
     def gameLoop(self, game):
+        game.check_if_solved()
         while not game.solved:
             self._show_status(game)
             move = self._get_next_move(game)
             game._update_pos(move)
+            game.check_if_solved()
         self._show_status(game)
         self.end(game)
 
@@ -31,6 +33,8 @@ class MazeCli:
             for c, value in enumerate(row):
                 if game.current_pos == [r, c]:
                     print '@',
+                elif game.finish_pos == [r, c]:
+                    print '$',
                 else:
                     print value,
         print
