@@ -21,3 +21,5 @@ TEXT_SIZE = 30
 WALL_CHAR = 'x'
 HALLWAY_CHAR = ' '
 GAME_TITLE = 'Maze!'
+PLAYER_CHAR = '@'
+FINISH_CHAR = '$'
