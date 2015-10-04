@@ -45,7 +45,7 @@ class Maze:
             self.interface = MazeCli()
         else:
             print('using pygame')
-            self.interface = MazePygame()
+            self.interface = MazePygame(self)
 
     def setStartingPos(self):
         if self.start and self.isUnoccupied(*self.start):
@@ -80,7 +80,7 @@ class Maze:
         """
         self.interface.gameLoop(self)
 
-    def _update_pos(self, move):
+    def update_pos(self, move):
         """
         Use the supplied move to update the user's current position.
         """
@@ -100,7 +100,7 @@ class Maze:
         self.setRandomPos('finishing')
         self.gameLoop()
 
-    def _get_available_moves(self):
+    def get_available_moves(self):
         """
         Return a list of legal moves (neighbors that are not walls).
         """
