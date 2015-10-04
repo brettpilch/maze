@@ -3,7 +3,7 @@ This program makes a maze using command-line interface.
 """
 
 import random
-from interface import MazeCli
+from interface import MazeCli, MazePygame
 
 # A small sample maze (used as input to the Maze class):
 maze_str = """  x   
@@ -45,7 +45,7 @@ class Maze:
             self.interface = MazeCli()
         else:
             print('using pygame')
-            self.interface = MazeCli()
+            self.interface = MazePygame()
 
     def setStartingPos(self):
         if self.start and self.isUnoccupied(*self.start):
@@ -88,8 +88,9 @@ class Maze:
         self.current_pos[0] += change[0]
         self.current_pos[1] += change[1]
 
-    def check_if_solved(self):
+    def isSolved(self):
         self.solved = self.current_pos == self.finish_pos
+        return self.solved
 
     def restart(self):
         """
